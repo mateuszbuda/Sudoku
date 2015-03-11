@@ -42,28 +42,23 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
         }
     }
     
-    for (int i = 0; i < BOARD_SZ; ++i) {
-        
-    }
-    
     while (!solved) {
         for (int i = 0; i < LOOP; ++i) {
             
-            // generate permutations
+            // random permutations in rows
             for (int j = 0; j < N; ++j) {
-                int m = (j * N) + (rand() % N);
-                int n = (j * N) + (rand() % N);
-                if (permutations[m] != 0 && permutations[n] != 0) {
-                    swap(permutations[m], permutations[n])
+                for (int k = 0; k < (N - 1); ++k) {
+                    if (boardCopy[(j * N) + k] == 0) {
+                        int l = (j * N) + k + 1 + (rand() % (N - k));
+                        if (boardCopy[l] == 0) {
+                            swap(permutations[k], permutations[l])
+                        }
+                    }
                 }
             }
             
-            for (int i = 0; i < BOARD_SZ; i++) {
-                if (boardCopy[i] == 0) {
-                    
-                }
-            }
             // verify solution
+            
             
             // if valid { solved = true; }
         }
