@@ -57,10 +57,65 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                 }
             }
             
+            bool valid = true;
             // verify solution
             
+            // verify columns
+            for (int j = 0; j < N; ++j) {
+                for (int k = 0; k < (N - 1); ++k) {
+                    for (int l = (k + 1); l < N; ++l) {
+                        if (permutations[j + (k * N)] == permutations[j + ((k + l) * N)]) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        break;
+                    }
+                }
+                if (!valid) {
+                    break;
+                }
+            }
             
-            // if valid { solved = true; }
+            // verify boxes
+            if (valid) {
+                int j = 0;
+                while (j < BOARD_SZ) {
+                    int box[N];
+                    
+                    box[0] = permutations[j];
+                    box[1] = permutations[j+1];
+                    box[2] = permutations[j+2];
+                    box[3] = permutations[j+N];
+                    box[4] = permutations[j+N+1];
+                    box[5] = permutations[j+N+2];
+                    box[6] = permutations[j+N+N];
+                    box[7] = permutations[j+N+N+1];
+                    box[8] = permutations[j+N+N+2];
+                    
+                    for (int p = 0; p < (N - 1); ++p) {
+                        for (int q = (p + 1); q < N; ++q) {
+                            if (box[p] == box[q]) {
+                                valid = false;
+                                break;
+                            }
+                        }
+                        if (!valid) {
+                            break;
+                        }
+                    }
+                    
+                    j = j + 3;
+                    if ((j % N) == 0) {
+                        j = j + (2 * N);
+                    }
+                }
+            }
+            
+            if (valid) {
+                solved = true;
+            }
         }
     }
 }
