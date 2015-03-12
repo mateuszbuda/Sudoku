@@ -12,12 +12,16 @@ using namespace metal;
 #define LENGTH(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 #define swap(x,y) { x = x + y; y = x - y; x = x - y; }
 
+char myRand();
+
 constant static const int N = 9;
 constant static const int BOARD_SZ = N * N;
 constant static const int LOOP = 1000000;
 
 kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
-                         device bool *solved [[ buffer(1) ]]) {
+                         device bool *solved [[ buffer(1) ]],
+                         device int *result [[ buffer(2) ]]) {
+    
     thread int boardCopy[BOARD_SZ];
     thread int permutations[BOARD_SZ];
     
@@ -26,7 +30,7 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
         boardCopy[i] = board[i];
     }
     
-    for (int i = 0, int v = 0; i < BOARD_SZ; ++i) {
+    for (int i = 0, v = 0; i < BOARD_SZ; ++i) {
         if (boardCopy[i] == 0) {
             for (int j = 0; j < N; ++j) {
                 if (boardCopy[(i / N) + j] == (v + 1)) {
@@ -49,7 +53,7 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
             for (int j = 0; j < N; ++j) {
                 for (int k = 0; k < (N - 1); ++k) {
                     if (boardCopy[(j * N) + k] == 0) {
-                        int l = (j * N) + k + 1 + (rand() % (N - k));
+                        int l = (j * N) + k + 1 + (myRand() % (N - k));
                         if (boardCopy[l] == 0) {
                             swap(permutations[k], permutations[l])
                         }
@@ -114,8 +118,17 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
             }
             
             if (valid) {
-                solved = true;
+                *solved = true;
+                for (int x = 0; x < BOARD_SZ; ++x) {
+                    result[x] = permutations[x];
+                }
             }
         }
     }
+}
+
+inline char myRand()
+{
+    thread uint32_t state = state * 1664525 + 1013904223;
+    return state >> 24;
 }
