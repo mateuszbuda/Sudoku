@@ -18,6 +18,44 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        board[0] = 1;
+        board[5] = 8;
+        board[6] = 4;
+        board[7] = 6;
+        board[9] = 2;
+        board[10] = 8;
+        board[13] = 4;
+        board[14] = 6;
+        board[15] = 9;
+        board[22] = 1;
+        board[23] = 5;
+        board[25] = 2;
+        board[26] = 8;
+        board[27] = 4;
+        board[29] = 9;
+        board[33] = 2;
+        board[35] = 6;
+        board[36] = 3;
+        board[40] = 2;
+        board[44] = 5;
+        board[45] = 6;
+        board[47] = 2;
+        board[51] = 7;
+        board[53] = 4;
+        board[54] = 8;
+        board[55] = 6;
+        board[57] = 4;
+        board[58] = 7;
+        board[62] = 2;
+        board[65] = 1;
+        board[66] = 8;
+        board[67] = 5;
+        board[70] = 4;
+        board[71] = 9;
+        board[73] = 9;
+        board[74] = 4;
+        board[75] = 1;
+        board[80] = 3;
     }
 
     override func didReceiveMemoryWarning() {
