@@ -91,15 +91,21 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
         // set up a compute pipeline with sudokuSolver function and add it to encoder
         let sudokuSolver = defaultLibrary.newFunctionWithName("sudokuSolver")
-        var pipelineErrors = NSErrorPointer()
-        var computePipelineFilter = device.newComputePipelineStateWithFunction(sudokuSolver!, error: pipelineErrors)
+        var pipelineErrors: NSError?
+        var computePipelineFilter = device.newComputePipelineStateWithFunction(sudokuSolver!, error: &pipelineErrors)
+        if computePipelineFilter == nil {
+            println("Failed to create pipeline state, error: \(pipelineErrors?.debugDescription)")
+            computeCommandEncoder.endEncoding()
+            return
+        }
         computeCommandEncoder.setComputePipelineState(computePipelineFilter!)
         
         // calculate byte length of input data - board
         var boardByteLength = board.count * sizeofValue(board[0])
         
         // create a MTLBuffer - input data for GPU
-        var inVectorBuffer = device.newBufferWithBytes(&board, length: boardByteLength, options: nil)
+        var boardDevice = [Int]()
+        var inVectorBuffer = device.newBufferWithBytes(&boardDevice, length: boardByteLength, options: nil)
         
         // set the input vector for the sudokuSolver function, e.g. inVector
         // atIndex: 0 here corresponds to buffer(0) in the sudokuSolver function

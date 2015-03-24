@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -19,12 +19,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="q3r-64-BVZ">
-                                <rect key="frame" x="24" y="28" width="552" height="552"/>
+                                <rect key="frame" x="150" y="150" width="300" height="300"/>
                                 <constraints>
+                                    <constraint firstAttribute="width" constant="300" id="4YD-xA-pQl"/>
+                                    <constraint firstAttribute="height" constant="300" id="EOq-ci-Yu0"/>
                                     <constraint firstAttribute="width" secondItem="q3r-64-BVZ" secondAttribute="height" multiplier="1:1" id="lwP-yw-67j"/>
                                 </constraints>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="2" minimumInteritemSpacing="2" id="Xtr-RQ-3JY">
-                                    <size key="itemSize" width="32" height="32"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="Xtr-RQ-3JY">
+                                    <size key="itemSize" width="33" height="33"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -34,10 +36,10 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="33" height="33"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RI7-nX-c0U">
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RI7-nX-c0U">
                                                     <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
@@ -51,7 +53,7 @@
                                             <constraint firstAttribute="bottom" secondItem="RI7-nX-c0U" secondAttribute="bottom" id="SUi-gL-vTZ"/>
                                             <constraint firstAttribute="trailing" secondItem="RI7-nX-c0U" secondAttribute="trailing" id="pDv-yQ-lrs"/>
                                         </constraints>
-                                        <size key="customSize" width="32" height="32"/>
+                                        <size key="customSize" width="33" height="33"/>
                                         <connections>
                                             <outlet property="textField" destination="RI7-nX-c0U" id="PkJ-xV-XbZ"/>
                                         </connections>
@@ -63,7 +65,7 @@
                                 </connections>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BBd-WG-MLV">
-                                <rect key="frame" x="281" y="588" width="38" height="30"/>
+                                <rect key="frame" x="281" y="458" width="38" height="30"/>
                                 <state key="normal" title="Solve">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -76,14 +78,21 @@
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="q3r-64-BVZ" secondAttribute="trailing" constant="8" id="35m-FI-pwc"/>
                             <constraint firstItem="q3r-64-BVZ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="8" id="8jj-QU-XV6"/>
+                            <constraint firstAttribute="centerX" secondItem="q3r-64-BVZ" secondAttribute="centerX" id="FJA-Jv-uLW"/>
+                            <constraint firstItem="BBd-WG-MLV" firstAttribute="top" secondItem="q3r-64-BVZ" secondAttribute="bottom" constant="8" id="OMl-iQ-wU6"/>
                             <constraint firstItem="q3r-64-BVZ" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="U2n-cg-XAb"/>
+                            <constraint firstAttribute="centerY" secondItem="q3r-64-BVZ" secondAttribute="centerY" id="dHP-6B-X80"/>
                             <constraint firstItem="BBd-WG-MLV" firstAttribute="top" secondItem="q3r-64-BVZ" secondAttribute="bottom" constant="8" id="dim-k4-9Hb"/>
                             <constraint firstAttribute="centerX" secondItem="BBd-WG-MLV" secondAttribute="centerX" id="iMh-Bp-JgA"/>
                             <constraint firstAttribute="centerX" secondItem="q3r-64-BVZ" secondAttribute="centerX" id="y5P-Lh-ouu"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
+                                <exclude reference="35m-FI-pwc"/>
+                                <exclude reference="8jj-QU-XV6"/>
+                                <exclude reference="U2n-cg-XAb"/>
                                 <exclude reference="y5P-Lh-ouu"/>
+                                <exclude reference="dim-k4-9Hb"/>
                             </mask>
                         </variation>
                     </view>
