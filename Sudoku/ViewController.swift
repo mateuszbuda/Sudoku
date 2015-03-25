@@ -106,7 +106,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             var solvedFlagBuffer = device.newBufferWithBytes(&solvedFlag, length: sizeofValue(solvedFlag), options: nil)
             computeCommandEncoder.setBuffer(solvedFlagBuffer, offset: 0, atIndex: 1)
             
-            var random = Int(arc4random_uniform(UInt32.max))
+            var random = UInt32(arc4random_uniform(UInt32.max))
             var randomBuffer = device.newBufferWithBytes(&random, length: sizeofValue(random), options: nil)
             computeCommandEncoder.setBuffer(randomBuffer, offset: 0, atIndex: 3)
             

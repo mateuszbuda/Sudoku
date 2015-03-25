@@ -12,7 +12,7 @@ using namespace metal;
 #define LENGTH(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 #define swap(x,y) { x = x + y; y = x - y; x = x - y; }
 
-char myRand(uint, int);
+uint myRand(uint, uint);
 
 constant static const int N = 9;
 constant static const int BOARD_SZ = N * N;
@@ -21,7 +21,7 @@ constant static const int LOOP = 1000000;
 kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                          device bool *solved [[ buffer(1) ]],
                          device int *result [[ buffer(2) ]],
-                         device int *random [[ buffer(3) ]],
+                         device uint *random [[ buffer(3) ]],
                          uint id [[ thread_position_in_grid ]]) {
     
     thread int boardCopy[BOARD_SZ];
@@ -155,7 +155,7 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
 //    }
 }
 
-inline char myRand(uint id, int rand)
+inline uint myRand(uint id, uint rand)
 {
     thread uint32_t state = id * 13 + rand;
     state = state * 1664525 + 1013904223;
