@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1514" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -39,8 +39,8 @@
                                             <rect key="frame" x="0.0" y="0.0" width="33" height="33"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RI7-nX-c0U">
-                                                    <rect key="frame" x="0.0" y="0.0" width="32" height="32"/>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="RI7-nX-c0U">
+                                                    <rect key="frame" x="0.0" y="0.0" width="33" height="33"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
                                                 </textField>
@@ -73,16 +73,52 @@
                                     <action selector="solve:" destination="BYZ-38-t0r" eventType="touchUpInside" id="TL0-d3-xeX"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bEg-nU-jDk">
+                                <rect key="frame" x="277" y="496" width="46" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="46" id="9Xx-LQ-Cse"/>
+                                    <constraint firstAttribute="height" constant="30" id="l2p-Cg-NOP"/>
+                                </constraints>
+                                <state key="normal" title="Reset">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="reset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="6yG-0f-Vz5"/>
+                                </connections>
+                            </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vNY-EJ-n2x">
+                                <rect key="frame" x="276" y="111" width="51" height="31"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="31" id="0CN-D0-Qd4"/>
+                                    <constraint firstAttribute="width" constant="49" id="hIQ-Xn-y6P"/>
+                                </constraints>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gid-lL-6hU">
+                                <rect key="frame" x="279" y="82" width="42" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="Cu5-3S-iWQ"/>
+                                    <constraint firstAttribute="width" constant="42" id="vGg-LS-IPb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="q3r-64-BVZ" secondAttribute="trailing" constant="8" id="35m-FI-pwc"/>
+                            <constraint firstItem="vNY-EJ-n2x" firstAttribute="top" secondItem="gid-lL-6hU" secondAttribute="bottom" constant="8" id="6gz-xE-uUO"/>
                             <constraint firstItem="q3r-64-BVZ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="8" id="8jj-QU-XV6"/>
                             <constraint firstAttribute="centerX" secondItem="q3r-64-BVZ" secondAttribute="centerX" id="FJA-Jv-uLW"/>
+                            <constraint firstAttribute="centerX" secondItem="gid-lL-6hU" secondAttribute="centerX" id="Nn3-H1-oxL"/>
                             <constraint firstItem="BBd-WG-MLV" firstAttribute="top" secondItem="q3r-64-BVZ" secondAttribute="bottom" constant="8" id="OMl-iQ-wU6"/>
                             <constraint firstItem="q3r-64-BVZ" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="U2n-cg-XAb"/>
+                            <constraint firstItem="q3r-64-BVZ" firstAttribute="top" secondItem="vNY-EJ-n2x" secondAttribute="bottom" constant="8" id="crh-vZ-lvJ"/>
+                            <constraint firstItem="bEg-nU-jDk" firstAttribute="top" secondItem="BBd-WG-MLV" secondAttribute="bottom" constant="8" id="czs-HR-Pk1"/>
+                            <constraint firstAttribute="centerX" secondItem="vNY-EJ-n2x" secondAttribute="centerX" id="dBu-qd-fbL"/>
                             <constraint firstAttribute="centerY" secondItem="q3r-64-BVZ" secondAttribute="centerY" id="dHP-6B-X80"/>
                             <constraint firstItem="BBd-WG-MLV" firstAttribute="top" secondItem="q3r-64-BVZ" secondAttribute="bottom" constant="8" id="dim-k4-9Hb"/>
+                            <constraint firstAttribute="centerX" secondItem="bEg-nU-jDk" secondAttribute="centerX" id="i9q-QG-iwm"/>
                             <constraint firstAttribute="centerX" secondItem="BBd-WG-MLV" secondAttribute="centerX" id="iMh-Bp-JgA"/>
                             <constraint firstAttribute="centerX" secondItem="q3r-64-BVZ" secondAttribute="centerX" id="y5P-Lh-ouu"/>
                         </constraints>
@@ -98,6 +134,8 @@
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="q3r-64-BVZ" id="KUy-II-gia"/>
+                        <outlet property="gpuSwitch" destination="vNY-EJ-n2x" id="jDM-2q-a3n"/>
+                        <outlet property="label" destination="gid-lL-6hU" id="PMx-HV-Dd8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

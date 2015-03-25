@@ -55,7 +55,7 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
         }
     }
 
-    if (id == 3) {
+    if (id == 0) {
         for (int j = 0; j < N; ++j) {
             for (int k = 0; k < N; ++k) {
                 int p = (j * N) + k;
