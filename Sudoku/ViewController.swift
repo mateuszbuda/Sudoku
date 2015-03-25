@@ -14,7 +14,7 @@ import Accelerate
 
 class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
     @IBOutlet weak var collectionView: UICollectionView!
-    var board = [Int](count: 81, repeatedValue: 0)
+    var board = [Int32](count: 81, repeatedValue: 0)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,10 +81,10 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     
     // MARK: - UIActions
     @IBAction func solve(sender: UIButton) {
-        var cells = collectionView.visibleCells();
-        for (var i = 0; i < 81; ++i) {
-            board[i] = (cells[i] as CollectionCell).textField.text.toInt()!;
-        }
+//        var cells = collectionView.visibleCells();
+//        for (var i = 0; i < 81; ++i) {
+//            board[i] = (Int32)((cells[i] as CollectionCell).textField.text.toInt()!);
+//        }
         
         // initialize Metal
         var (device, commandQueue, defaultLibrary, commandBuffer, computeCommandEncoder) = initMetal()
@@ -104,26 +104,30 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         var boardByteLength = board.count * sizeofValue(board[0])
         
         // create a MTLBuffer - input data for GPU
-        var boardDevice = [Int]()
-        var inVectorBuffer = device.newBufferWithBytes(&boardDevice, length: boardByteLength, options: nil)
+        var boardBuffer = device.newBufferWithBytes(&board, length: boardByteLength, options: nil)
         
         // set the input vector for the sudokuSolver function, e.g. inVector
         // atIndex: 0 here corresponds to buffer(0) in the sudokuSolver function
-        computeCommandEncoder.setBuffer(inVectorBuffer, offset: 0, atIndex: 0)
+        computeCommandEncoder.setBuffer(boardBuffer, offset: 0, atIndex: 0)
         
         // create the output vector for the sudokuSolver function, e.g. outVector
         // atIndex: 2 here corresponds to buffer(2) in the sudokuSolver function
-        var resultdata = [Int](count:board.count, repeatedValue: 0)
-        var outVectorBuffer = device.newBufferWithBytes(&resultdata, length: boardByteLength, options: nil)
-        computeCommandEncoder.setBuffer(outVectorBuffer, offset: 0, atIndex: 2)
+        var result = [Int32](count:board.count, repeatedValue: 0)
+        var resultBuffer = device.newBufferWithBytes(&result, length: boardByteLength, options: nil)
+        computeCommandEncoder.setBuffer(resultBuffer, offset: 0, atIndex: 2)
         
         var solvedFlag = false;
-        var solvedFlagBuffer = device.newBufferWithBytes(&solvedFlag, length: 1, options: nil)
+        var solvedFlagBuffer = device.newBufferWithBytes(&solvedFlag, length: sizeofValue(solvedFlag), options: nil)
         computeCommandEncoder.setBuffer(solvedFlagBuffer, offset: 0, atIndex: 1)
         
+        var random = Int(arc4random_uniform(UInt32.max))
+        var randomBuffer = device.newBufferWithBytes(&random, length: sizeofValue(random), options: nil)
+        computeCommandEncoder.setBuffer(randomBuffer, offset: 0, atIndex: 3)
+        
         // make grid
-        var threadsPerGroup = MTLSize(width: 512, height: 512, depth: 1)
-        var numThreadgroups = MTLSize(width: 1024, height:1024, depth:1)
+        var threadsPerGroup = MTLSize(width: 512, height: 1, depth: 1)
+        var numThreadgroups = MTLSize(width: (Int)(pow(Double(2), Double(0))), height: 1, depth:1)
+        println("Block: \(threadsPerGroup.width) x \(threadsPerGroup.height)\nGrid: \(numThreadgroups.width) x \(numThreadgroups.height) x \(numThreadgroups.depth)")
         computeCommandEncoder.dispatchThreadgroups(numThreadgroups, threadsPerThreadgroup: threadsPerGroup)
         
         // compute and wait for result
@@ -133,11 +137,11 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         
         // Get GPU data
         // outVectorBuffer.contents() returns UnsafeMutablePointer roughly equivalent to char* in C
-        var data = NSData(bytesNoCopy: outVectorBuffer.contents(),
-            length: board.count * sizeof(Int), freeWhenDone: false)
+        var data = NSData(bytesNoCopy: resultBuffer.contents(),
+            length: board.count * sizeof(Int32), freeWhenDone: false)
         
         // get data from GPU into Swift array
-        data.getBytes(&board, length: board.count * sizeof(Int))
+        data.getBytes(&board, length: board.count * sizeof(Int32))
         
         collectionView.reloadData()
     }
