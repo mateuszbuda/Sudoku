@@ -16,7 +16,7 @@ uint myRand(uint, uint);
 
 constant static const int N = 9;
 constant static const int BOARD_SZ = N * N;
-constant static const int LOOP = 1000000;
+constant static const int LOOP = 100000;
 
 kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                          device bool *solved [[ buffer(1) ]],
@@ -57,6 +57,7 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
 
     
     while (!(*solved)) {
+        
         for (int i = 0; i < LOOP; ++i) {
             
             // random permutations in rows
@@ -123,6 +124,9 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                             break;
                         }
                     }
+                    if (!valid) {
+                        break;
+                    }
                     
                     j = j + 3;
                     if ((j % N) == 0) {
@@ -137,12 +141,13 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                     result[x] = permutations[x];
                 }
             }
-        }
-    }
+            
+        } // for (int i = 0; i < LOOP; ++i)
+        
+    } // while (!(*solved))
 }
 
-inline uint myRand(uint id, uint rand)
-{
+inline uint myRand(uint id, uint rand) {
     thread uint32_t state = id * 13 + rand;
     state = state * 1664525 + 1013904223;
     return state >> 24;

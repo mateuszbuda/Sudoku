@@ -270,6 +270,9 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                             break;
                         }
                     }
+                    if (!valid) {
+                        break;
+                    }
                     
                     j = j + 3;
                     if ((j % N) == 0) {
