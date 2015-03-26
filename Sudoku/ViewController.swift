@@ -25,15 +25,15 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     override func viewDidLoad() {
         super.viewDidLoad()
         board =
-            [1, 0, 0, 0, 0, 8, 4, 6, 0,
-             2, 8, 0, 0, 4, 6, 9, 0, 0,
-             0, 0, 0, 0, 1, 5, 0, 2, 8,
-             4, 0, 9, 0, 0, 0, 2, 0, 6,
-             3, 0, 0, 0, 2, 0, 0, 0, 5,
-             6, 0, 2, 0, 0, 0, 7, 0, 4,
-             8, 6, 0, 4, 7, 0, 0, 0, 2,
-             0, 0, 1, 8, 5, 0, 0, 4, 9,
-             0, 9, 4, 1, 0, 0, 0, 0, 3]
+            [1, 0, 0, 0, 0, 8, 4, 6, 7,
+             2, 8, 0, 0, 4, 6, 9, 5, 1,
+             9, 4, 6, 0, 1, 5, 3, 2, 8,
+             4, 1, 9, 0, 0, 7, 2, 0, 6,
+             3, 0, 0, 6, 2, 4, 1, 0, 5,
+             6, 0, 2, 0, 0, 1, 7, 0, 4,
+             8, 6, 3, 4, 7, 9, 5, 1, 2,
+             7, 2, 1, 8, 5, 3, 6, 4, 9,
+             5, 9, 4, 1, 6, 2, 8, 7, 3]
         
         gpuSwitch.on = true
         label.text = gpuSwitch.on ? "GPU" : "CPU"
@@ -111,8 +111,8 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             computeCommandEncoder.setBuffer(randomBuffer, offset: 0, atIndex: 3)
             
             // make grid
-            var threadsPerGroup = MTLSize(width: 512, height: 1, depth: 1)
-            var numThreadgroups = MTLSize(width: (Int)(pow(Double(2), Double(0))), height: 1, depth:1)
+            var threadsPerGroup = MTLSize(width: 32, height: 1, depth: 1)
+            var numThreadgroups = MTLSize(width: (Int)(pow(Double(10), Double(0))), height: 1, depth:1)
             println("Block: \(threadsPerGroup.width) x \(threadsPerGroup.height)\nGrid: \(numThreadgroups.width) x \(numThreadgroups.height) x \(numThreadgroups.depth)")
             computeCommandEncoder.dispatchThreadgroups(numThreadgroups, threadsPerThreadgroup: threadsPerGroup)
             
@@ -138,15 +138,15 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     
     @IBAction func reset(sender: UIButton) {
         board =
-            [1, 0, 0, 0, 0, 8, 4, 6, 0,
-             2, 8, 0, 0, 4, 6, 9, 0, 0,
-             0, 0, 0, 0, 1, 5, 0, 2, 8,
-             4, 0, 9, 0, 0, 0, 2, 0, 6,
-             3, 0, 0, 0, 2, 0, 0, 0, 5,
-             6, 0, 2, 0, 0, 0, 7, 0, 4,
-             8, 6, 0, 4, 7, 0, 0, 0, 2,
-             0, 0, 1, 8, 5, 0, 0, 4, 9,
-             0, 9, 4, 1, 0, 0, 0, 0, 3]
+            [1, 0, 0, 0, 0, 8, 4, 6, 7,
+             2, 8, 0, 0, 4, 6, 9, 5, 1,
+             9, 4, 6, 0, 1, 5, 3, 2, 8,
+             4, 1, 9, 0, 0, 7, 2, 0, 6,
+             3, 0, 0, 6, 2, 4, 1, 0, 5,
+             6, 0, 2, 0, 0, 1, 7, 0, 4,
+             8, 6, 3, 4, 7, 9, 5, 1, 2,
+             7, 2, 1, 8, 5, 3, 6, 4, 9,
+             5, 9, 4, 1, 6, 2, 8, 7, 3]
         
         collectionView.reloadData()
     }
@@ -171,6 +171,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             
             return (device, commandQueue, defaultLibrary!, commandBuffer, computeCommandEncoder)
     }
+    
     
     // MARK: - CPU Sudoku Solver
     
@@ -201,22 +202,88 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
                 permutations[i] = Int32(v);
             }
         }
-
-        for (var j = 0; j < N; ++j) {
-            for (var k = 0; k < N; ++k) {
-                let p = (j * N) + k;
-                if (board[p] == 0) {
-                    let l = (j * N) + (Int(arc4random_uniform(UInt32.max)) % N);
-                    if (board[l] == 0 && l != p) {
-                        let tmp = permutations[p];
-                        permutations[p] = permutations[l];
-                        permutations[l] = tmp;
+        
+        var solved = false;
+        while (!solved) {
+            
+            // random permutations in rows
+            for (var j = 0; j < N; ++j) {
+                for (var k = 0; k < N; ++k) {
+                    let p = (j * N) + k;
+                    if (board[p] == 0) {
+                        let l = (j * N) + (Int(arc4random_uniform(UInt32.max)) % N);
+                        if (board[l] == 0 && l != p) {
+                            let tmp = permutations[p];
+                            permutations[p] = permutations[l];
+                            permutations[l] = tmp;
+                        }
                     }
                 }
             }
+
+            
+            // verify solution
+            var valid = true;
+
+            // verify columns
+            for (var j = 0; j < N; ++j) {
+                for (var k = 0; k < (N - 1); ++k) {
+                    for (var l = (k + 1); l < N; ++l) {
+                        if (permutations[j + (k * N)] == permutations[j + (l * N)]) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        break;
+                    }
+                }
+                if (!valid) {
+                    break;
+                }
+            }
+
+            // verify boxes
+            if (valid) {
+                var j = 0;
+                while (j < BOARD_SZ) {
+                    var box = [Int32](count: N, repeatedValue: 0)
+
+                    box[0] = permutations[j];
+                    box[1] = permutations[j+1];
+                    box[2] = permutations[j+2];
+                    box[3] = permutations[j+N];
+                    box[4] = permutations[j+N+1];
+                    box[5] = permutations[j+N+2];
+                    box[6] = permutations[j+N+N];
+                    box[7] = permutations[j+N+N+1];
+                    box[8] = permutations[j+N+N+2];
+
+                    for (var p = 0; p < (N - 1); ++p) {
+                        for (var q = (p + 1); q < N; ++q) {
+                            if (box[p] == box[q]) {
+                                valid = false;
+                                break;
+                            }
+                        }
+                        if (!valid) {
+                            break;
+                        }
+                    }
+                    
+                    j = j + 3;
+                    if ((j % N) == 0) {
+                        j = j + (2 * N);
+                    }
+                }
+            }
+            
+            if (valid) {
+                solved = true;
+            }
+            
         }
 
         return permutations
     }
 }
-

@@ -55,104 +55,90 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
         }
     }
 
-    if (id == 0) {
-        for (int j = 0; j < N; ++j) {
-            for (int k = 0; k < N; ++k) {
-                int p = (j * N) + k;
-                if (boardCopy[p] == 0) {
-                    int l = (j * N) + (myRand(id, rand) % N);
-                    if (boardCopy[l] == 0 && l != p) {
-                        int tmp = permutations[p];
-                        permutations[p] = permutations[l];
-                        permutations[l] = tmp;
+    
+    while (!(*solved)) {
+        for (int i = 0; i < LOOP; ++i) {
+            
+            // random permutations in rows
+            for (int j = 0; j < N; ++j) {
+                for (int k = 0; k < N; ++k) {
+                    int p = (j * N) + k;
+                    if (boardCopy[p] == 0) {
+                        int l = (j * N) + (myRand(id, rand) % N);
+                        if (boardCopy[l] == 0 && l > p) {
+                            int tmp = permutations[p];
+                            permutations[p] = permutations[l];
+                            permutations[l] = tmp;
+                        }
                     }
                 }
             }
-        }
-        for (int x = 0; x < BOARD_SZ; ++x) {
-            result[x] = permutations[x];
+
+            
+            // verify solution
+            thread bool valid = true;
+
+            // verify columns
+            for (int j = 0; j < N; ++j) {
+                for (int k = 0; k < (N - 1); ++k) {
+                    for (int l = (k + 1); l < N; ++l) {
+                        if (permutations[j + (k * N)] == permutations[j + (l * N)]) {
+                            valid = false;
+                            break;
+                        }
+                    }
+                    if (!valid) {
+                        break;
+                    }
+                }
+                if (!valid) {
+                    break;
+                }
+            }
+            
+            // verify boxes
+            if (valid) {
+                int j = 0;
+                while (j < BOARD_SZ) {
+                    int box[N];
+                    
+                    box[0] = permutations[j];
+                    box[1] = permutations[j+1];
+                    box[2] = permutations[j+2];
+                    box[3] = permutations[j+N];
+                    box[4] = permutations[j+N+1];
+                    box[5] = permutations[j+N+2];
+                    box[6] = permutations[j+N+N];
+                    box[7] = permutations[j+N+N+1];
+                    box[8] = permutations[j+N+N+2];
+                    
+                    for (int p = 0; p < (N - 1); ++p) {
+                        for (int q = (p + 1); q < N; ++q) {
+                            if (box[p] == box[q]) {
+                                valid = false;
+                                break;
+                            }
+                        }
+                        if (!valid) {
+                            break;
+                        }
+                    }
+                    
+                    j = j + 3;
+                    if ((j % N) == 0) {
+                        j = j + (2 * N);
+                    }
+                }
+            }
+            
+            if (valid) {
+                (*solved) = true;
+                for (int x = 0; x < BOARD_SZ; ++x) {
+                    result[x] = permutations[x];
+                }
+            }
         }
     }
-    
-//    while (!(*solved)) {
-//        for (int i = 0; i < LOOP; ++i) {
-//            
-//            // random permutations in rows
-//            for (int j = 0; j < N; ++j) {
-//                for (int k = 0; k < (N - 1); ++k) {
-//                    if (boardCopy[(j * N) + k] == 0) {
-//                        int l = (j * N) + k + 1 + (myRand() % (N - k));
-//                        if (boardCopy[l] == 0) {
-//                            swap(permutations[k], permutations[l])
-//                        }
-//                    }
-//                }
-//            }
-//            
-//            bool valid = true;
-//            // verify solution
-//            
-//            // verify columns
-//            for (int j = 0; j < N; ++j) {
-//                for (int k = 0; k < (N - 1); ++k) {
-//                    for (int l = (k + 1); l < N; ++l) {
-//                        if (permutations[j + (k * N)] == permutations[j + ((k + l) * N)]) {
-//                            valid = false;
-//                            break;
-//                        }
-//                    }
-//                    if (!valid) {
-//                        break;
-//                    }
-//                }
-//                if (!valid) {
-//                    break;
-//                }
-//            }
-//            
-//            // verify boxes
-//            if (valid) {
-//                int j = 0;
-//                while (j < BOARD_SZ) {
-//                    int box[N];
-//                    
-//                    box[0] = permutations[j];
-//                    box[1] = permutations[j+1];
-//                    box[2] = permutations[j+2];
-//                    box[3] = permutations[j+N];
-//                    box[4] = permutations[j+N+1];
-//                    box[5] = permutations[j+N+2];
-//                    box[6] = permutations[j+N+N];
-//                    box[7] = permutations[j+N+N+1];
-//                    box[8] = permutations[j+N+N+2];
-//                    
-//                    for (int p = 0; p < (N - 1); ++p) {
-//                        for (int q = (p + 1); q < N; ++q) {
-//                            if (box[p] == box[q]) {
-//                                valid = false;
-//                                break;
-//                            }
-//                        }
-//                        if (!valid) {
-//                            break;
-//                        }
-//                    }
-//                    
-//                    j = j + 3;
-//                    if ((j % N) == 0) {
-//                        j = j + (2 * N);
-//                    }
-//                }
-//            }
-//            
-//            if (valid) {
-//                (*solved) = true;
-//                for (int x = 0; x < BOARD_SZ; ++x) {
-//                    result[x] = permutations[x];
-//                }
-//            }
-//        }
-//    }
 }
 
 inline uint myRand(uint id, uint rand)
