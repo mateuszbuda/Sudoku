@@ -76,7 +76,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             var (device, commandQueue, defaultLibrary, commandBuffer, computeCommandEncoder) = initMetal()
             
             // set up a compute pipeline with sudokuSolver function and add it to encoder
-            let sudokuSolver = defaultLibrary.newFunctionWithName("sudokuSolver")
+            let sudokuSolver = defaultLibrary.newFunctionWithName("testSolver")
             var pipelineErrors: NSError?
             var computePipelineFilter = device.newComputePipelineStateWithFunction(sudokuSolver!, error: &pipelineErrors)
             if computePipelineFilter == nil {
@@ -111,8 +111,8 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             computeCommandEncoder.setBuffer(randomBuffer, offset: 0, atIndex: 3)
             
             // make grid
-            var threadsPerGroup = MTLSize(width: 32, height: 1, depth: 1)
-            var numThreadgroups = MTLSize(width: (Int)(pow(Double(10), Double(0))), height: 1, depth:1)
+            var threadsPerGroup = MTLSize(width: 1, height: 1, depth: 1)
+            var numThreadgroups = MTLSize(width: (Int)(pow(Double(2), Double(0))), height: 1, depth:1)
             println("Block: \(threadsPerGroup.width) x \(threadsPerGroup.height)\nGrid: \(numThreadgroups.width) x \(numThreadgroups.height) x \(numThreadgroups.depth)")
             computeCommandEncoder.dispatchThreadgroups(numThreadgroups, threadsPerThreadgroup: threadsPerGroup)
             
