@@ -32,11 +32,10 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
     // copy board to faster memory
     for (int i = 0; i < BOARD_SZ; ++i) {
         boardCopy[i] = board[i];
-        if (boardCopy[i] != 0) {
-            permutations[i] = boardCopy[i];
-        }
+        permutations[i] = boardCopy[i];
     }
     
+    // initial permutation
     for (int i = 0; i < BOARD_SZ; ++i) {
         if (boardCopy[i] == 0) {
             int v;
@@ -56,7 +55,7 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
         }
     }
 
-    
+    // solve sudoku
     while (!(*solved)) {
         
         for (int i = 0; i < LOOP; ++i) {
@@ -68,7 +67,7 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                     if (boardCopy[p] == 0) {
                         rand = myRand(id, rand);
                         int l = (j * N) + (rand % N);
-                        if (boardCopy[l] == 0 && l > p) {
+                        if (boardCopy[l] == 0 && l != p) {
                             int tmp = permutations[p];
                             permutations[p] = permutations[l];
                             permutations[l] = tmp;
@@ -135,6 +134,9 @@ kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                         j = j + (2 * N);
                     }
                 }
+            } // if (valid)
+            else {
+                continue;
             }
             
             if (valid) {
@@ -168,14 +170,12 @@ kernel void testSolver(const device int *board [[ buffer(0) ]],
     // copy board to faster memory
     for (int i = 0; i < BOARD_SZ; ++i) {
         boardCopy[i] = board[i];
-        if (boardCopy[i] != 0) {
-            permutations[i] = boardCopy[i];
-        }
+        permutations[i] = boardCopy[i];
     }
     
     for (int i = 0; i < BOARD_SZ; ++i) {
         if (boardCopy[i] == 0) {
-            int v;
+            int v = 1;
             for (v = 1; v < N; ++v) {
                 bool unique = true;
                 for (int j = 0; j < N; ++j) {

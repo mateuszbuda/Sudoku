@@ -72,7 +72,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             var (device, commandQueue, defaultLibrary, commandBuffer, computeCommandEncoder) = initMetal()
             
             // set up a compute pipeline with sudokuSolver function and add it to encoder
-            let sudokuSolver = defaultLibrary.newFunctionWithName("testSolver")
+            let sudokuSolver = defaultLibrary.newFunctionWithName("sudokuSolver")
             var pipelineErrors: NSError?
             var computePipelineState = device.newComputePipelineStateWithFunction(sudokuSolver!, error: &pipelineErrors)
             if computePipelineState == nil {
