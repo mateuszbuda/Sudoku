@@ -107,8 +107,8 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             computeCommandEncoder.setBuffer(randomBuffer, offset: 0, atIndex: 3)
             
             // make grid
-            var threadsPerGroup = MTLSize(width: 1, height: 1, depth: 1)
-            var numThreadgroups = MTLSize(width: (Int)(pow(Double(2), Double(0))), height: 1, depth:1)
+            var threadsPerGroup = MTLSize(width: 32, height: 1, depth: 1)
+            var numThreadgroups = MTLSize(width: (Int)(pow(Double(2), Double(10))), height: 1, depth:1)
             println("Block: \(threadsPerGroup.width) x \(threadsPerGroup.height)\nGrid: \(numThreadgroups.width) x \(numThreadgroups.height) x \(numThreadgroups.depth)")
             computeCommandEncoder.dispatchThreadgroups(numThreadgroups, threadsPerThreadgroup: threadsPerGroup)
             
@@ -118,9 +118,9 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             commandBuffer.waitUntilCompleted()
             
             // Get GPU data
-            // outVectorBuffer.contents() returns UnsafeMutablePointer roughly equivalent to char* in C
+            // resultBuffer.contents() returns UnsafeMutablePointer roughly equivalent to char* in C
             var data = NSData(bytesNoCopy: resultBuffer.contents(),
-                length: board.count * sizeof(Int32), freeWhenDone: false)
+                length: boardByteLength, freeWhenDone: false)
             
             // get data from GPU into Swift array
             data.getBytes(&board, length: board.count * sizeof(Int32))
