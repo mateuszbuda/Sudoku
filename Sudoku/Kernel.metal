@@ -18,6 +18,7 @@ constant static const int N = 9;
 constant static const int BOARD_SZ = N * N;
 constant static const int LOOP = 100000;
 
+// (kernel | vertex | fragment)
 kernel void sudokuSolver(const device int *board [[ buffer(0) ]],
                          device bool *solved [[ buffer(1) ]],
                          device int *result [[ buffer(2) ]],

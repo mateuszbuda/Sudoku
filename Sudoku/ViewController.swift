@@ -67,10 +67,6 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
     
     // MARK: - UIActions
     @IBAction func solve(sender: UIButton) {
-//        var cells = collectionView.visibleCells();
-//        for (var i = 0; i < 81; ++i) {
-//            board[i] = (Int32)((cells[i] as CollectionCell).textField.text.toInt()!);
-//        }
         if (gpuSwitch.on) {
             // initialize Metal
             var (device, commandQueue, defaultLibrary, commandBuffer, computeCommandEncoder) = initMetal()
@@ -78,13 +74,13 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             // set up a compute pipeline with sudokuSolver function and add it to encoder
             let sudokuSolver = defaultLibrary.newFunctionWithName("testSolver")
             var pipelineErrors: NSError?
-            var computePipelineFilter = device.newComputePipelineStateWithFunction(sudokuSolver!, error: &pipelineErrors)
-            if computePipelineFilter == nil {
+            var computePipelineState = device.newComputePipelineStateWithFunction(sudokuSolver!, error: &pipelineErrors)
+            if computePipelineState == nil {
                 println("Failed to create pipeline state, error: \(pipelineErrors?.debugDescription)")
                 computeCommandEncoder.endEncoding()
                 return
             }
-            computeCommandEncoder.setComputePipelineState(computePipelineFilter!)
+            computeCommandEncoder.setComputePipelineState(computePipelineState!)
             
             // calculate byte length of input data - board
             var boardByteLength = board.count * sizeofValue(board[0])
@@ -160,7 +156,7 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             // Queue to handle an ordered list of command buffers
             var commandQueue = device.newCommandQueue()
             
-            // Access to Metal functions that are stored in Shaders.metal file, e.g. sigmoid()
+            // Access to Metal functions that are stored in Kernel.metal file, e.g. sukoduSolver()
             var defaultLibrary = device.newDefaultLibrary()
             
             // Buffer for storing encoded commands that are sent to GPU
