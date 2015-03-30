@@ -88,27 +88,27 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             // create a MTLBuffer - input data for GPU
             var boardBuffer = device.newBufferWithBytes(&board, length: boardByteLength, options: nil)
             
-            // set the input vector for the sudokuSolver function, e.g. inVector
+            // set the input vector for the sudokuSolver function,
             // atIndex: 0 here corresponds to buffer(0) in the sudokuSolver function
             computeCommandEncoder.setBuffer(boardBuffer, offset: 0, atIndex: 0)
             
-            // create the output vector for the sudokuSolver function, e.g. outVector
+            // create the output vector for the sudokuSolver function,
             // atIndex: 2 here corresponds to buffer(2) in the sudokuSolver function
             var result = [Int32](count:board.count, repeatedValue: 0)
             var resultBuffer = device.newBufferWithBytes(&result, length: boardByteLength, options: nil)
             computeCommandEncoder.setBuffer(resultBuffer, offset: 0, atIndex: 2)
             
-            var solvedFlag = false;
-            var solvedFlagBuffer = device.newBufferWithBytes(&solvedFlag, length: sizeofValue(solvedFlag), options: nil)
+            var solvedFlag = [Int32](count: 1, repeatedValue: 0)
+            var solvedFlagBuffer = device.newBufferWithBytes(&solvedFlag, length: sizeofValue(solvedFlag[0]), options: nil)
             computeCommandEncoder.setBuffer(solvedFlagBuffer, offset: 0, atIndex: 1)
             
-            var random = UInt32(arc4random_uniform(UInt32.max))
-            var randomBuffer = device.newBufferWithBytes(&random, length: sizeofValue(random), options: nil)
+            var random = [ UInt32(arc4random_uniform(UInt32.max)) ]
+            var randomBuffer = device.newBufferWithBytes(&random, length: sizeofValue(random[0]), options: nil)
             computeCommandEncoder.setBuffer(randomBuffer, offset: 0, atIndex: 3)
             
             // make grid
-            var threadsPerGroup = MTLSize(width: 32, height: 1, depth: 1)
-            var numThreadgroups = MTLSize(width: (Int)(pow(Double(2), Double(10))), height: 1, depth:1)
+            var threadsPerGroup = MTLSize(width: 16, height: 1, depth: 1)
+            var numThreadgroups = MTLSize(width: (Int)(pow(Double(2), Double(2))), height: 1, depth:1)
             println("Block: \(threadsPerGroup.width) x \(threadsPerGroup.height)\nGrid: \(numThreadgroups.width) x \(numThreadgroups.height) x \(numThreadgroups.depth)")
             computeCommandEncoder.dispatchThreadgroups(numThreadgroups, threadsPerThreadgroup: threadsPerGroup)
             
@@ -116,6 +116,9 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             computeCommandEncoder.endEncoding()
             commandBuffer.commit()
             commandBuffer.waitUntilCompleted()
+            if (commandBuffer.error != nil) {
+                println("Command buffer error: \(commandBuffer.error?.debugDescription)")
+            }
             
             // Get GPU data
             // resultBuffer.contents() returns UnsafeMutablePointer roughly equivalent to char* in C
@@ -124,6 +127,11 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
             
             // get data from GPU into Swift array
             data.getBytes(&board, length: board.count * sizeof(Int32))
+            
+            var data2 = NSData(bytesNoCopy: solvedFlagBuffer.contents(),
+                length: sizeofValue(solvedFlag[0]), freeWhenDone: false)
+            data2.getBytes(&solvedFlag, length: sizeofValue(solvedFlag))
+            println("Solved: \(solvedFlag[0])")
         }
         else {
             board = sudokuSolver(board);
@@ -136,13 +144,13 @@ class ViewController: UIViewController, UICollectionViewDelegateFlowLayout, UICo
         board =
             [1, 0, 0, 0, 0, 8, 4, 6, 7,
              2, 8, 0, 0, 4, 6, 9, 5, 1,
-             9, 4, 6, 0, 1, 5, 3, 2, 8,
+             9, 4, 6, 7, 1, 5, 3, 2, 8,
              4, 1, 9, 0, 0, 7, 2, 0, 6,
              3, 0, 0, 6, 2, 4, 1, 0, 5,
              6, 0, 2, 0, 0, 1, 7, 0, 4,
-             8, 6, 3, 4, 7, 9, 5, 1, 2,
-             7, 2, 1, 8, 5, 3, 6, 4, 9,
-             5, 9, 4, 1, 6, 2, 8, 7, 3]
+             8, 0, 3, 0, 7, 0, 5, 0, 2,
+             7, 2, 0, 8, 0, 3, 6, 4, 9,
+             5, 0, 4, 0, 6, 0, 8, 7, 3]
         
         collectionView.reloadData()
     }
